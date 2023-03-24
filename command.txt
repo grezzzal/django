@@ -1,0 +1,62 @@
+python manage.py shell
+from news.models import *
+
+user_1 = User.objects.create_user(username="Степан") 
+user_1.save()
+user_2 = User.objects.create_user(username="Кирилл")
+user_2.save()
+
+author_1 = Author.objects.create(user=user_1)
+author_1.save()                              
+author_2 = Author.objects.create(user=user_2) 
+author_2.save()    
+
+>>> category_1 = Category.objects.create(news_category=Category.culture) 
+>>> category_1.save()
+>>> category_2 = Category.objects.create(news_category=Category.cience)    
+>>> category_2.save()                                                    
+>>> category_3 = Category.objects.create(news_category=Category.tech)    
+>>> category_3.save()                                                  
+>>> category_4 = Category.objects.create(news_category=Category.politics)  
+>>> category_4.save()
+
+>>> post_1 = Post.objects.create(author=author_1, post_type=Post.article, title="В Греции обноружили новые ископаемые", text="Тут должно быть очень очень много текста", rating=0)      
+>>> post_1.save()                  
+>>> post_2 = Post.objects.create(author=author_1, post_type=Post.news, title="Очень важные новости", text="Тут должно быть очень очень много текста", rating=0) 
+>>> post_2.save()                    
+>>> post_3 = Post.objects.create(author=author_2, post_type=Post.article, title="Ситуация в мире", text="Тут должно быть очень очень много текста", rating=0)   
+>>> post_3.save()   
+
+>>> post_1.categories.add(category_1, category_2) 
+>>> post_1.save()                                
+>>> post_2.categories.add(category_3)             
+>>> post_2.save()                     
+>>> post_3.categories.add(category_4) 
+>>> post_3.save()    
+
+>>> comment_1 = Comment.objects.create(post=post_1, user=user_2, comment_text="Хорошая статья", rating=2)
+>>> comment_1.save()
+>>> comment_2 = Comment.objects.create(post=post_2, user=user_2, comment_text="Очень классная статья", rating=3)  
+>>> comment_2.save()                                                                                             
+>>> comment_3 = Comment.objects.create(post=post_3, user=user_1, comment_text="Статья не сильно понравилась(", rating=1) 
+>>> comment_3.save()                                                                                                     
+>>> comment_4 = Comment.objects.create(post=post_3, user=user_1, comment_text="Я разочарован", rating=0)                 
+>>> comment_4.save()   
+
+>>> Post.objects.get(id=1).like()     
+>>> Post.objects.get(id=2).like() 
+>>> Post.objects.get(id=3).dislike() 
+>>> Post.objects.get(id=4).dislike() 
+>>> Comment.objects.get(id=1).dislike()
+>>> Comment.objects.get(id=2).dislike() 
+>>> Comment.objects.get(id=3).like()    
+>>> Comment.objects.get(id=4).like() 
+
+>>> Author.objects.get(id=1).update_rating() 
+>>> Author.objects.get(id=2).update_rating()
+
+>>> Author.objects.all().order_by('-rating').values('user')[0]
+
+>>> Comment.objects.filter(post=post_1.id).values('comment_time_created', 'rating', 'comment_text') 
+>>> Comment.objects.filter(post=post_2.id).values('comment_time_created', 'rating', 'comment_text') 
+>>> Comment.objects.filter(post=post_3.id).values('comment_time_created', 'rating', 'comment_text') 
